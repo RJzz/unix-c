@@ -6,7 +6,7 @@
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	#include <stdlib.h>
-	#define PORT 40000
+	#define PORT 13
 	
 	#define BACKLOG 1
 	int main() {
