@@ -33,7 +33,7 @@ int main() {
     setsocketopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     
     bzero(&server, sizeof(server));
-    server.sin_famliy = AF_INET;
+    server.sin_family = AF_INET;
     server.sin_port = PORT;
     //将32位的长整形数从主机字节序转换成网络字节序，h表示主机, to ,n表示网络,l表示长整形,如果是s的话表示16位的短整形数
     server.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -52,7 +52,7 @@ int main() {
     len = sizeof(client);;
     while(1) {
         if((connfd = accept(listenfd, (struct sockaddr *)&client, &len)) == -1) {
-            perror("accept failed")；
+            perror("accept failed");
             exit(1);
         }
         //pid大于0的话，表明当前的是父进程,需要关闭连接套接字，重新进入accept的状态
