@@ -1,28 +1,30 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
+#include <string.h>
 #include <strings.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <netdb.h>
 
-#define PORT 1234
+#define PORT 10000
 #define MAXDATASIZE 100
 
 void process(FILE *fp, int sockfd);
 char* getMessage(char* sendline, int len, FILE* fp);
 
-int main(int agrc, char *argv[]) {
+int main(int argc, char *argv[]) {
     int sockfd;
 
     struct sockaddr_in server;
     struct hostent *he;
 
-    if(argv != 2) {
+    if(argc != 2) {
         perror("argv!=2");
         exit(1);
     }
-    if((he = gethostbyname(argv[1]) == NULL) {
+    if((he = gethostbyname(argv[1])) == NULL) {
         perror("gethostbyname failed");
         exit(1);
     }
@@ -33,8 +35,8 @@ int main(int agrc, char *argv[]) {
 
     //开始做初始化操作
     bzero(&server, sizeof(server));
-    server.family = AF_INET;
-    server.port = htonl(PORT);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
     server.sin_addr = *((struct in_addr *)he->h_addr);
     //初始化操作结束时候可以开始连接服务器
     if(connect(sockfd, (struct sockaddr *)&server, sizeof(server)) == -1) {
@@ -66,7 +68,7 @@ void process(FILE *fp, int sockfd) {
             perror("server terminated.\n");
             return;
         }
-        recvline[num - 1] = '\0';
+        recvline[num] = '\0';
         printf("server's message is : %s", recvline);
 
     }

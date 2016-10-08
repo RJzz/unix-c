@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <strings.h>
 #include <unistd.h>
@@ -6,7 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define PORT 1234
+#define PORT 10000
 #define BACKLOG 5
 #define MAXDATASIZE 1000
 void process_cli(int connfd, struct sockaddr_in client);
@@ -30,11 +31,11 @@ int main() {
     
     //set socket option as reuse
     int opt = SO_REUSEADDR;
-    setsocketopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     
     bzero(&server, sizeof(server));
     server.sin_family = AF_INET;
-    server.sin_port = PORT;
+    server.sin_port = htons(PORT);
     //将32位的长整形数从主机字节序转换成网络字节序，h表示主机, to ,n表示网络,l表示长整形,如果是s的话表示16位的短整形数
     server.sin_addr.s_addr = htonl(INADDR_ANY);
     
@@ -56,7 +57,7 @@ int main() {
             exit(1);
         }
         //pid大于0的话，表明当前的是父进程,需要关闭连接套接字，重新进入accept的状态
-        if((pid = fock()) > 0) {
+        if((pid = fork()) > 0) {
             close(connfd);
             continue;
         }//pid为0的时候表明是子进程,这个时候就可以进行相关的数据传输处理操作,在这之前需要关闭监听套接字
