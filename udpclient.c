@@ -17,7 +17,7 @@
 		struct hostent *he;
 		struct sockaddr_in server,peer;
 		
-		if(argc != 3) {
+		if(argc != 2) {
 			printf("Usage : %s <IP Address\n", argv[1]);
 			exit(1); 
 		}
@@ -31,16 +31,19 @@
 			exit(1);
 		}
 		
-		
+		//初始化
 		bzero(&server, sizeof(server));
 		server.sin_family = AF_INET;
 		server.sin_port = htons(PORT);
 		server.sin_addr = *((struct in_addr *)he->h_addr);
-		sendto(socketfd, argv[2], strlen(argv[2]), 0, 
-			(struct sockaddr *)&server, sizeof(server));
-		socklen_t len;
-		len = sizeof(server);
 		while(1) {
+			//输入想要发送的数据
+			char *text = (char *)malloc(sizeof(char) * MAXDATASIZE);
+			printf("Message send to server : ");
+			scanf("%s", text);
+			sendto(socketfd, text, strlen(text), 0, (struct sockaddr *)&server, sizeof(server));
+			socklen_t len;
+			len = sizeof(server);
 			if((num = recvfrom(socketfd, buf, MAXDATASIZE, 0, 
 				(struct sockaddr *)&peer, &len)) == -1) {
 				perror("num error");
@@ -52,13 +55,16 @@
 				continue;
 			}
 			buf[num] = '\0';
-			printf("server message: %s\n", buf);
+			
 			if(!strcmp(buf, "bye")) {
+				printf("goodbye!");
+				//收到别人发的bye之后也要发送一个bye给对方,不然对方就在那里傻等着什么都干不了
+				sendto(socketfd, "bye", 3, 0, (struct sockaddr *)&server, sizeof(server));
 				break;
+			}else {
+				printf("Receieve from server : %s\n", buf);
 			}
+			free(text);
 		} 
-
-
-
 		close(socketfd);
 	} 

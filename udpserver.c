@@ -38,14 +38,20 @@
 				exit(1);
 			}
 			buf[num] = '\0';
-		
-			printf("fuck");
-			sendto(sockfd, "welcome", 8, 0, (struct sockaddr *)&client, addrlen);
 			if(!strcmp(buf, "bye")) {
+				printf("goodbye~！");
+				//收到别人发的bye之后也要发送一个bye给对方,不然对方就在那里傻等着什么都干不了
+				sendto(sockfd, "bye", 3, 0, (struct sockaddr *)&client, addrlen);
 				break;
-			}	
-		}
-
-		close(sockfd);
+			}else {
+				printf("Receive from client : %s\n", buf);
+			}
+			char *text = (char *)malloc(sizeof(char) * MAXDATASIZE); 
+			printf("Message send to client : ");
+			scanf("%s", text);	
+			sendto(sockfd, text, strlen(text), 0, (struct sockaddr *)&client, addrlen);
 	
+			free(text);
+		}
+		close(sockfd);
 	}
