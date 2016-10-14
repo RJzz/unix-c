@@ -41,21 +41,28 @@
 		 	printf("%s\n",strerror(errno));
 			exit(1);
 		} 
+		// //文件
+		// char file_name[MAXDATASIZE];
+		// bzero(file_name, MAXDATASIZE);
 		//p指向最后一个/出现的位置
 		char *p = rindex(argv[2], '/');
 		FILE *input = NULL;
+		bzero(buf, MAXDATASIZE);
 		//去掉/
 		if(p != NULL) {
 			p++;
 			input = fopen(argv[2], "rb");
+			strncpy(buf, p, MAXDATASIZE > strlen(p) ? strlen(p) : MAXDATASIZE);
 			//将文件名传过去
-			send(socketfd, p, strlen(p), 0);
-			printf("%s is sending", p);
+			
+			send(socketfd, buf, strlen(buf), 0);
+			printf("%s is sending", buf);
 		}else{
 			input = fopen(argv[2], "rb");
+			strncpy(buf, argv[2], MAXDATASIZE > strlen(argv[2]) ? strlen(argv[2]) : MAXDATASIZE);
 			//将文件名传过去
-			send(socketfd, argv[2], strlen(argv[2]), 0);
-			printf("%s is sending", argv[2]);
+			send(socketfd, buf, strlen(buf), 0);
+			printf("%s is sending", buf);
 		}
 		
 		if(input == NULL) {
@@ -64,12 +71,13 @@
 		}
 		//实际读取到的个数
 		int realRead = 0;
-
+		bzero(buf, MAXDATASIZE);
 		while((realRead = fread(buf, sizeof(char), MAXDATASIZE, input)) > 0) {
-			send(socketfd, buf, strlen(buf), 0);
-			printf(".");
+			send(socketfd, buf, realRead, 0);
+			bzero(buf, MAXDATASIZE);
 		}
 		printf("\nsend over");
 		close(socketfd);
 		fclose(input);
 	} 
+
