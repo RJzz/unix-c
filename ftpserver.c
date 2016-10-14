@@ -112,7 +112,7 @@
 		//printf("%s", recvbuf);
 		//从接受缓冲区中取出文件名
 		strncpy(file_name, recvbuf, MAXDATA > strlen(recvbuf) ? strlen(recvbuf) : MAXDATA);
-		output = fopen(file_name, "wb");
+		output = fopen(file_name, "w");
 
 		if(output == NULL) {
 
@@ -127,7 +127,7 @@
 		
 		bzero(recvbuf, MAXDATA);
 		while((num = recv(connectfd, recvbuf, MAXDATA, 0)) > 0) {
-			printf("%s", recvbuf);
+			//printf("%s", recvbuf);
 			fwrite(recvbuf, sizeof(char), num, output);
 			bzero(recvbuf, MAXDATA);
 		}
