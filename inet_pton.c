@@ -23,7 +23,7 @@ int main() {
         // 
         //ipv4
         if(inet_pton(AF_INET, input, &ipV4.sin_addr.s_addr)) {
-            printf("Yout IPV4 address is : 0x%x\n", ntohl(ipV4.sin_addr.s_addr));
+            printf("Yout IPV4 address is : 0x%X\n", ntohl(ipV4.sin_addr.s_addr));
         }else if(inet_pton(AF_INET, &input, ipV4.sin_addr.s_addr) == -1) {
             printf("ipv4 error");
         }else { //指定的不是一个有效的IPV4格式,检测一下是否式IPV6
@@ -33,7 +33,7 @@ int main() {
                 //输出ipv6
                 int i = 0;
                 for(i; i < 8; ++i) {
-                    printf("%x", ntohs(ipV6.sin6_addr.s6_addr[i]));
+                    printf("%X", ntohs(ipV6.sin6_addr.s6_addr[i]));
                 }
                 printf("\n");
             }else if(inet_pton(AF_INET6, input, &ipV6.sin6_addr.s6_addr) == 0) {
